@@ -13,6 +13,9 @@
   --grad: linear-gradient(135deg, #7c6cff 0%, #4f8cff 100%);
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.45);
+  /* Stronger-than-default easing curves (built-in eases lack punch). */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 * {
@@ -129,14 +132,23 @@ a:hover {
   cursor: pointer;
   background: var(--surface-2);
   color: var(--text);
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.16s var(--ease-out), border-color 0.16s var(--ease-out),
+    box-shadow 0.16s var(--ease-out), filter 0.16s var(--ease-out),
+    transform 0.12s var(--ease-out);
 }
 .btn:hover {
   text-decoration: none;
 }
+/* Press feedback: the UI confirms it heard the tap. */
+.btn:active {
+  transform: scale(0.97);
+}
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.btn:disabled:active {
+  transform: none;
 }
 .btn-primary {
   background: var(--grad);
@@ -315,7 +327,8 @@ textarea {
   color: var(--text);
   position: relative;
   overflow: hidden;
-  transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+  transition: border-color 0.2s var(--ease-out), transform 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
 }
 .snippet-card::before {
   content: '';
@@ -625,6 +638,13 @@ a.tag:hover {
 .mini-btn:hover {
   background: #232838;
 }
+.mini-btn {
+  transition: background 0.15s var(--ease-out), color 0.15s var(--ease-out),
+    border-color 0.15s var(--ease-out), transform 0.12s var(--ease-out);
+}
+.mini-btn:active {
+  transform: scale(0.96);
+}
 .mini-btn.active {
   border-color: var(--primary);
   color: var(--primary);
@@ -644,6 +664,33 @@ a.tag:hover {
 .btn.liked {
   color: #ff5c7a;
   border-color: #ff5c7a;
+}
+/* A quick pop when a like lands (feedback, fires only on the action). */
+.btn.pop {
+  animation: heart-pop 0.32s var(--ease-out);
+}
+@keyframes heart-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* On touch devices, :hover sticks after a tap — don't lift cards there. */
+@media (hover: none) {
+  .snippet-card:hover,
+  .featured:hover {
+    transform: none;
+    box-shadow: var(--shadow);
+  }
+  .snippet-card:hover::before {
+    opacity: 0;
+  }
 }
 
 /* ---------- Comments ---------- */
@@ -828,6 +875,13 @@ a.tag:hover {
   font-weight: 600;
   cursor: pointer;
 }
+.tab {
+  transition: background 0.16s var(--ease-out), border-color 0.16s var(--ease-out),
+    color 0.16s var(--ease-out), transform 0.12s var(--ease-out);
+}
+.tab:active {
+  transform: scale(0.97);
+}
 .tab.active {
   background: var(--primary);
   border-color: var(--primary);
@@ -902,6 +956,15 @@ a.tag:hover {
   padding: 12px;
   z-index: 20;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  /* Scale in from the button it's anchored to, not from center. */
+  transform-origin: top right;
+  animation: pop-in 0.16s var(--ease-out);
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
 }
 .save-title {
   margin: 0 0 8px;

@@ -18,6 +18,7 @@ export default function SnippetDetail() {
   const [languages, setLanguages] = useState([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [liking, setLiking] = useState(false);
 
   useEffect(() => {
     setSnippet(null);
@@ -35,6 +36,11 @@ export default function SnippetDetail() {
         ? await api.unlikeSnippet(snippet.id)
         : await api.likeSnippet(snippet.id);
       setSnippet((s) => ({ ...s, likedByMe: res.likedByMe, likeCount: res.likeCount }));
+      if (res.likedByMe) {
+        // Pop only when a like lands, not on un-like.
+        setLiking(true);
+        setTimeout(() => setLiking(false), 340);
+      }
     } catch (e) {
       setError(e.message);
     }
@@ -137,7 +143,7 @@ export default function SnippetDetail() {
 
       <div className="code-toolbar">
         <button
-          className={`btn btn-ghost ${snippet.likedByMe ? 'liked' : ''}`}
+          className={`btn btn-ghost ${snippet.likedByMe ? 'liked' : ''} ${liking ? 'pop' : ''}`}
           onClick={toggleLike}
         >
           {snippet.likedByMe ? '♥' : '♡'} {snippet.likeCount}
