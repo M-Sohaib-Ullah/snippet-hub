@@ -11,6 +11,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [unread, setUnread] = useState(0);
+  const [open, setOpen] = useState(false);
 
   // Poll the unread notification count while signed in. Re-checks on every
   // route change too, so the badge updates promptly after you act.
@@ -33,7 +34,15 @@ export default function Navbar() {
     };
   }, [user, location.pathname]);
 
+  // Close the mobile menu whenever the route changes.
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
+  const close = () => setOpen(false);
+
   function handleLogout() {
+    close();
     logout();
     navigate('/');
   }
@@ -41,34 +50,57 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="container navbar-inner">
-        <Link to="/" className="brand">
+        <Link to="/" className="brand" onClick={close}>
           <span className="brand-mark">{'</>'}</span> SnippetHub
         </Link>
-        <nav className="nav-links">
+
+        <button
+          className="nav-toggle"
+          aria-label="Toggle menu"
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+        >
+          {open ? '✕' : '☰'}
+        </button>
+
+        <nav className={`nav-links ${open ? 'open' : ''}`}>
           {user && (
-            <NavLink to="/" end>
+            <NavLink to="/" end onClick={close}>
               Browse
             </NavLink>
           )}
-          {user && <NavLink to="/explore">Explore</NavLink>}
-          {user && <NavLink to="/feed">Feed</NavLink>}
           {user && (
-            <NavLink to="/notifications" className="bell" title="Notifications">
-              🔔
+            <NavLink to="/explore" onClick={close}>
+              Explore
+            </NavLink>
+          )}
+          {user && (
+            <NavLink to="/feed" onClick={close}>
+              Feed
+            </NavLink>
+          )}
+          {user && (
+            <NavLink to="/notifications" className="bell" title="Notifications" onClick={close}>
+              🔔<span className="bell-label">Notifications</span>
               {unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}
             </NavLink>
           )}
           <button
             className="btn btn-ghost icon-btn"
-            onClick={toggleTheme}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleTheme();
+            }}
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           >
             {theme === 'dark' ? '☀' : '🌙'}
           </button>
           {user ? (
             <>
-              <NavLink to="/new">+ New Snippet</NavLink>
-              <NavLink to={`/u/${user.username}`} className="nav-user">
+              <NavLink to="/new" onClick={close}>
+                + New Snippet
+              </NavLink>
+              <NavLink to={`/u/${user.username}`} className="nav-user" onClick={close}>
                 <Avatar username={user.username} avatar={user.avatar} size={26} />
                 <span>{user.username}</span>
               </NavLink>
@@ -78,8 +110,10 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <NavLink to="/login">Log in</NavLink>
-              <NavLink to="/register" className="btn btn-primary">
+              <NavLink to="/login" onClick={close}>
+                Log in
+              </NavLink>
+              <NavLink to="/register" className="btn btn-primary" onClick={close}>
                 Sign up
               </NavLink>
             </>
