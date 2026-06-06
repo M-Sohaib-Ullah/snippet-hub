@@ -6,10 +6,20 @@ import { SUPABASE_URL, SUPABASE_SERVICE_KEY } from './config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const avatarsDir = path.join(__dirname, 'data', 'avatars');
-fs.mkdirSync(avatarsDir, { recursive: true });
 
 export const useSupabase = !!(SUPABASE_URL && SUPABASE_SERVICE_KEY);
 const BUCKET = 'avatars';
+
+// Only create the local avatars folder when using local-disk storage. On
+// serverless hosts (Vercel) the filesystem is read-only and we use Supabase
+// Storage instead, so creating it here would throw EROFS and crash the function.
+if (!useSupabase) {
+  try {
+    fs.mkdirSync(avatarsDir, { recursive: true });
+  } catch {
+    /* read-only filesystem */
+  }
+}
 
 let _client = null;
 async function client() {
