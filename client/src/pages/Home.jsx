@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api.js';
 import SnippetCard from '../components/SnippetCard.jsx';
+import FeaturedSnippet from '../components/FeaturedSnippet.jsx';
 import { SnippetGridSkeleton } from '../components/Skeleton.jsx';
 
 export default function Home() {
@@ -116,11 +117,28 @@ export default function Home() {
       ) : (
         <>
           <p className="muted small">{data.total} snippet{data.total === 1 ? '' : 's'}</p>
-          <div className="grid">
-            {data.snippets.map((s) => (
-              <SnippetCard key={s.id} snippet={s} languageLabel={labelFor(s.language)} />
-            ))}
-          </div>
+          {(() => {
+            // Spotlight the top snippet only on the default browse view (no
+            // search/filter, first page, enough results to justify hierarchy).
+            const featured =
+              !q && !language && !tag && page === 1 && data.snippets.length > 2;
+            const rest = featured ? data.snippets.slice(1) : data.snippets;
+            return (
+              <>
+                {featured && (
+                  <FeaturedSnippet
+                    snippet={data.snippets[0]}
+                    languageLabel={labelFor(data.snippets[0].language)}
+                  />
+                )}
+                <div className="grid">
+                  {rest.map((s) => (
+                    <SnippetCard key={s.id} snippet={s} languageLabel={labelFor(s.language)} />
+                  ))}
+                </div>
+              </>
+            );
+          })()}
           {data.pages > 1 && (
             <div className="pagination">
               <button

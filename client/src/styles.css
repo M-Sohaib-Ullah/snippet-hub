@@ -395,6 +395,96 @@ a.tag:hover {
   text-decoration: none;
 }
 
+/* ---------- Featured (spotlight) snippet ---------- */
+.featured {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  padding: 0;
+  overflow: hidden;
+  color: var(--text);
+  margin-bottom: 16px;
+  transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+.featured:hover {
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
+  text-decoration: none;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+.featured-main {
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.featured-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.featured-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+.featured-desc {
+  margin: 0;
+  color: var(--muted);
+}
+.featured-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 6px;
+}
+.featured-code {
+  position: relative;
+  background: #1e2230;
+  border-left: 1px solid var(--border);
+  min-height: 220px;
+  min-width: 0;
+}
+.featured-code pre {
+  margin: 0;
+  padding: 18px 20px;
+  height: 100%;
+  max-height: 300px;
+  overflow: hidden;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #c8cedd;
+}
+.featured-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64px;
+  background: linear-gradient(to bottom, transparent, #1e2230);
+  pointer-events: none;
+}
+@media (max-width: 760px) {
+  .featured {
+    grid-template-columns: 1fr;
+  }
+  .featured-code {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    min-height: 0;
+  }
+  .featured-code pre {
+    max-height: 200px;
+  }
+  .featured-title {
+    font-size: 1.35rem;
+  }
+}
+
 /* ---------- Detail ---------- */
 .detail {
   max-width: 860px;
