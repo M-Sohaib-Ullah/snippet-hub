@@ -1,8 +1,9 @@
 import SnippetCard from './SnippetCard.jsx';
+import { SnippetGridSkeleton } from './Skeleton.jsx';
 
 // Renders a paginated grid of snippets shared by Home, Feed and profile pages.
 export default function SnippetGrid({ data, loading, error, labelFor, onPage, emptyMessage }) {
-  if (loading) return <p className="muted">Loading snippets…</p>;
+  if (loading) return <SnippetGridSkeleton />;
   if (error) return <div className="alert">{error}</div>;
   if (!data || data.snippets.length === 0) {
     return (

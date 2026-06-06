@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api.js';
 import SnippetCard from '../components/SnippetCard.jsx';
+import { SnippetGridSkeleton } from '../components/Skeleton.jsx';
 
 export default function Home() {
   const [languages, setLanguages] = useState([]);
@@ -104,7 +105,7 @@ export default function Home() {
       )}
 
       {loading ? (
-        <p className="muted">Loading snippets…</p>
+        <SnippetGridSkeleton />
       ) : error ? (
         <div className="alert">{error}</div>
       ) : data.snippets.length === 0 ? (

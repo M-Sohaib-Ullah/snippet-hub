@@ -8,6 +8,7 @@ import Comments from '../components/Comments.jsx';
 import SaveToCollection from '../components/SaveToCollection.jsx';
 import RunPanel from '../components/RunPanel.jsx';
 import RelatedSnippets from '../components/RelatedSnippets.jsx';
+import { SnippetDetailSkeleton } from '../components/Skeleton.jsx';
 
 export default function SnippetDetail() {
   const { id } = useParams();
@@ -81,7 +82,7 @@ export default function SnippetDetail() {
   }
 
   if (error) return <div className="alert">{error}</div>;
-  if (!snippet) return <p className="muted">Loading…</p>;
+  if (!snippet) return <SnippetDetailSkeleton />;
 
   const isOwner = user && user.id === snippet.authorId;
 
